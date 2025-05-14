@@ -45,3 +45,11 @@ En este caso no es necesario, pero lo dejamos comentado para reutilizarlo en otr
 
 ```
 pip install -r requirements.txt
+
+# Ejecutar cálculo red neuronal
+
+Para ejecutar el programa de cálculo de red neuronal se puede hacer con:
+
+```
+python3 pregunta2/calculo_red_neuronal.py
+```
