@@ -1,2 +1,2 @@
-echo '*' > pregunta3/imagenes/kmeans/.gitignore
+echo '*' > pregunta3/imagenes/knn/.gitignore
 echo '!.gitkeep' >> pregunta3/imagenes/knn/.gitignore
