@@ -53,3 +53,22 @@ Para ejecutar el programa de cálculo de red neuronal se puede hacer con:
 ```
 python3 pregunta2/calculo_red_neuronal.py
 ```
+
+# Ejecutar análisis de k-means
+
+Para ejecutar el programa de análisis de k-means se puede hacer con:
+
+```
+python3 pregunta3/analize_kmeans.py
+```
+
+El programa va a generar una salida por pantalla. Se tiene en cuenta lo siguiente:
+
+* Tamaño de muestra: 10, 50 y 150
+* Valor de k: 1, 2 y 5
+
+Además, como cada ejecución se generan esos datos cogiendo al azar del repositorio Iris, los resultados pueden ser diferentes.
+
+Se generan imágenes para pétalo y sépalo (se han hecho 2D para proveer una buena comprensión de los datos). 
+
+Las imágenes se guardan en el folder pregunta3/imagenes/kmeans
