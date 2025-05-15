@@ -1,92 +1,108 @@
+import os
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
-import os
-from collections import Counter
-from sklearn.datasets import make_blobs
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
+from sklearn.datasets import load_iris
+from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score, homogeneity_score
 
 # Mensaje inicial
-print("\033[34mEjecutando...\033[0m \033[33manalize_kmeans\033[0m")
+print("\033[34mEjecutando...\033[0m \033[33manalize_kmeans (clustering con doble leyenda)\033[0m")
 
-# Crear carpeta de imágenes
+# Crear carpeta si no existe, y borrar solo los archivos .png previos
 output_dir = "pregunta3/imagenes/kmeans"
 os.makedirs(output_dir, exist_ok=True)
+for filename in os.listdir(output_dir):
+    if filename.endswith(".png"):
+        os.remove(os.path.join(output_dir, filename))
 
-# Crear datos sintéticos con 6 clústeres
-X, y = make_blobs(n_samples=300, centers=6, cluster_std=1.2, random_state=42)
+# Cargar el dataset Iris
+iris = load_iris()
+X = iris.data
+y = iris.target
+class_names = iris.target_names
 
-# Nuevo ejemplo para clasificar
-nuevo_ejemplo = np.array([[0.0, 5.0]])
+# Usaremos las dos primeras features para graficar
+X_plot = X[:, :2]
+feature_names = iris.feature_names[:2]
 
 # Configuraciones
-sample_sizes = [10, 50, 100]
-k_values = [1, 2, 5]
+sample_sizes = [10, 50, 150]
+k_values = [1, 2, 3, 5]
+
+# Formas y colores para clusters y clases
+markers = ['o', 's', 'D', '^', 'v', 'P', '*']
+colors = ['tab:blue', 'tab:orange', 'tab:green']
 
 for sample_size in sample_sizes:
-    # Muestreo aleatorio
     indices = np.random.choice(len(X), size=sample_size, replace=False)
     X_sample = X[indices]
+    X_sample_plot = X_plot[indices]
     y_sample = y[indices]
 
-    # Verificar si se puede estratificar
-    y_counts = Counter(y_sample)
-    can_stratify = all(count >= 2 for count in y_counts.values())
-    stratify_param = y_sample if can_stratify else None
-    if not can_stratify:
-        print(f"⚠️ No se puede estratificar muestra de tamaño {sample_size}. Split aleatorio usado.")
-
-    # Split train/test
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_sample, y_sample, test_size=0.3, stratify=stratify_param, random_state=42
-    )
-
     for k in k_values:
-        kmeans = KNeighborsClassifier(n_neighbors=k)
-        kmeans.fit(X_train, y_train)
+        kmeans = KMeans(n_clusters=k, n_init="auto", random_state=42)
+        kmeans.fit(X_sample)
+        labels = kmeans.labels_
+        centroids = kmeans.cluster_centers_[:, :2]
 
-        y_pred = kmeans.predict(X_test)
-        acc = accuracy_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred, average='macro')
-        cm = confusion_matrix(y_test, y_pred)
-
-        # Vecinos más cercanos del nuevo ejemplo
-        distancias, indices_vecinos = kmeans.kneighbors(nuevo_ejemplo)
-        clases_vecinos = y_train[indices_vecinos[0]]
-        clases_vecinos_nombres = [f"clase {c}" for c in clases_vecinos]
-
-        pred_nuevo = kmeans.predict(nuevo_ejemplo)[0]
+        # Métricas
+        ari = adjusted_rand_score(y_sample, labels)
+        nmi = normalized_mutual_info_score(y_sample, labels)
+        homo = homogeneity_score(y_sample, labels)
 
         print(f"\n=== Muestra: {sample_size} | k = {k} ===")
-        print(f"Precisión: {acc:.2f}")
-        print(f"F1-score macro: {f1:.2f}")
-        print("Matriz de confusión:")
-        print(cm)
-        print(f"Vecinos más cercanos (k={k}): {clases_vecinos_nombres}")
-        print(f"→ Predicción del nuevo ejemplo: clase {pred_nuevo}")
+        print(f"Inercia: {kmeans.inertia_:.2f}")
+        print(f"ARI: {ari:.2f} | NMI: {nmi:.2f} | Homogeneidad: {homo:.2f}")
 
-        # Gráfico
-        plt.figure(figsize=(6, 5))
-        for class_index in np.unique(y_sample):
-            plt.scatter(
-                X_sample[y_sample == class_index, 0],
-                X_sample[y_sample == class_index, 1],
-                label=f"Clase {class_index}",
-                marker='o',
-                edgecolor='k'
+        # Crear figura más ancha
+        fig, ax = plt.subplots(figsize=(9, 5))
+
+        # Graficar cada punto con su color (clase real) y forma (cluster asignado)
+        for i in range(sample_size):
+            cluster_id = labels[i]
+            class_id = y_sample[i]
+            ax.scatter(
+                X_sample_plot[i, 0], X_sample_plot[i, 1],
+                c=colors[class_id],
+                marker=markers[cluster_id % len(markers)],
+                edgecolor='k',
+                s=80,
+                label=f"{cluster_id}-{class_id}"  # temporal para leyendas separadas
             )
-        plt.scatter(
-            nuevo_ejemplo[0, 0], nuevo_ejemplo[0, 1],
-            color='red', marker='*', s=200, label='Nuevo ejemplo'
+
+        # Graficar centroides
+        ax.scatter(
+            centroids[:, 0], centroids[:, 1],
+            s=200, marker='X', c='red', label='Centroides'
         )
-        plt.title(f'Clasificación con kmeans\nMuestra={sample_size}, k={k}')
-        plt.xlabel('Feature 1')
-        plt.ylabel('Feature 2')
-        plt.grid(True)
-        plt.legend(fontsize='small', loc='best')
+
+        # Leyenda 1: por forma (clusters)
+        cluster_legend = [
+            plt.Line2D([0], [0], marker=markers[i % len(markers)], color='w',
+                       label=f'Cluster {i}', markerfacecolor='gray', markeredgecolor='k', markersize=10)
+            for i in range(k)
+        ]
+
+        # Leyenda 2: por color (clases reales)
+        class_legend = [
+            plt.Line2D([0], [0], marker='o', color='w',
+                       label=class_names[i], markerfacecolor=colors[i], markeredgecolor='k', markersize=10)
+            for i in range(len(class_names))
+        ]
+
+        ax.set_title(f'K-Means en Iris (2D)\nMuestra={sample_size}, k={k}')
+        ax.set_xlabel(feature_names[0])
+        ax.set_ylabel(feature_names[1])
+        ax.grid(True)
+
+        # Mostrar leyendas separadas en una columna al costado
+        leg1 = ax.legend(handles=cluster_legend, title='Clusters (formas)', loc='upper left', bbox_to_anchor=(1.02, 1))
+        leg2 = ax.legend(handles=class_legend, title='Clases reales (colores)', loc='lower left', bbox_to_anchor=(1.02, 0))
+        ax.add_artist(leg1)
+
         plt.tight_layout()
-        plt.savefig(f"{output_dir}/muestra_{sample_size}_k_{k}.png")
+        plt.savefig(f"{output_dir}/iris_muestra_{sample_size}_k_{k}.png", bbox_inches='tight')
         plt.close()
 
 # Mensaje final
