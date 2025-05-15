@@ -5,7 +5,8 @@ Repositorio de Github para hacer la PEC4 de la asignatura de Inteligencia artifi
 # Table of Contents
 1. [Configuración de VS Code](#configuración-de-vs-code)
 2. [Ejecutar cálculo red neuronal](#ejecutar-cálculo-red-neuronal)
-3. [Ejecutar análisis de k-means](#ejecutar-análisis-de-k-means)
+3. [Ejecutar análisis de knn](#ejecutar-análisis-de-knn)
+4. [Ejecutar análisis de k-means](#ejecutar-análisis-de-k-means)
 
 # Configuración de VS Code
 
@@ -57,12 +58,12 @@ Para ejecutar el programa de cálculo de red neuronal se puede hacer con:
 python3 pregunta2/calculo_red_neuronal.py
 ```
 
-# Ejecutar análisis de k-means
+# Ejecutar análisis de knn
 
-Para ejecutar el programa de análisis de k-means se puede hacer con:
+Para ejecutar el programa de análisis de knn se puede hacer con:
 
 ```
-python3 pregunta3/analize_kmeans.py
+python3 pregunta3/analize_knn.py
 ```
 
 El programa va a generar una salida por pantalla. Se tiene en cuenta lo siguiente:
@@ -73,5 +74,24 @@ El programa va a generar una salida por pantalla. Se tiene en cuenta lo siguient
 Además, como cada ejecución se generan esos datos cogiendo al azar del repositorio Iris, los resultados pueden ser diferentes.
 
 Se generan imágenes para pétalo y sépalo (se han hecho 2D para proveer una buena comprensión de los datos). 
+
+Las imágenes se guardan en el folder pregunta3/imagenes/knn
+
+# Ejecutar análisis de kmeans
+
+Para ejecutar el programa de análisis de kmeans se puede hacer con:
+
+```
+python3 pregunta3/analize_kmeans.py
+```
+
+El programa va a generar una salida por pantalla. Se tiene en cuenta lo siguiente:
+
+* Tamaño de muestra: 10, 50 y 150
+* Valor de k: 1, 2, 3 y 5
+
+Además, como cada ejecución se generan esos datos cogiendo al azar del repositorio Iris, los resultados pueden ser diferentes.
+
+Se generan imágenes para cada tamaño de muestra y valor de k. 
 
 Las imágenes se guardan en el folder pregunta3/imagenes/kmeans
