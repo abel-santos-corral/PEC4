@@ -3,7 +3,7 @@
 Repositorio de Github para hacer la PEC4 de la asignatura de Inteligencia artificial
 
 # Table of Contents
-1. [Configuración de VS Code](#configuracion-de-vs-code)
+1. [Configuración de VS Code](#configuración-de-vs-code)
 2. [Ejecutar cálculo red neuronal](#ejecutar-calculo-red-neuronal)
 3. [Ejecutar análisis de k-means](#ejecutar-analisis-de-k-means)
 
@@ -47,6 +47,7 @@ En este caso no es necesario, pero lo dejamos comentado para reutilizarlo en otr
 
 ```
 pip install -r requirements.txt
+```
 
 # Ejecutar cálculo red neuronal
 
