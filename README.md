@@ -4,6 +4,8 @@ Repositorio de Github para hacer la PEC4 de la asignatura de Inteligencia artifi
 
 # Table of Contents
 1. [Configuración de VS Code](#configuracion-de-vs-code)
+2. [Ejecutar cálculo red neuronal](#ejecutar-calculo-red-neuronal)
+3. [Ejecutar análisis de k-means](#ejecutar-analisis-de-k-means)
 
 # Configuración de VS Code
 
